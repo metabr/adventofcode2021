@@ -1,7 +1,5 @@
-(def input (clojure.string/split (slurp "day04.input") #"\n"))
-
-(def numbers (->> (clojure.string/split (first input) #",")
-                  (map read-string)))
+(ns advent.day04
+  (:require [clojure.string :as string]))
 
 (defn parse-board [bs]
   (let [bs  (rest bs) ;; skip empty line
@@ -22,8 +20,6 @@
       bs
       (let [[b input'] (parse-board input)]
         (recur input' (conj bs b))))))
-
-(def boards (parse-boards input))
 
 (def rows-and-cols
   (let [rows (partition 5 (range 25))
@@ -54,23 +50,26 @@
 (defn final-score [board n]
   (* (board-sum board) n))
 
-(def winning-boards
-  (loop [boards boards
-         numbers numbers
-         number-called nil
-         winning-boards []]
-    (let [win (winning-board boards)]
-      (if (empty? numbers)
+(defn run [& args]
+  (let [input (string/split (slurp "inputs/day04") #"\n")
+        numbers (->> (string/split (first input) #",")
+                     (map read-string))
         winning-boards
-        (if (some? win)
-          (recur (mark-boards (filter (complement wins?) boards) (first numbers))
-                 (rest numbers)
-                 (first numbers)
-                 (conj winning-boards {:board win :after number-called :final-score (final-score win number-called)}))
-          (recur (mark-boards boards (first numbers))
-                 (rest numbers)
-                 (first numbers)
-                 winning-boards))))))
-
-(println "First to win:" (first winning-boards))
-(println "Last to win:" (last winning-boards))
+        (loop [boards (parse-boards input)
+               numbers numbers
+               number-called nil
+               winning-boards []]
+          (let [win (winning-board boards)]
+            (if (empty? numbers)
+              winning-boards
+              (if (some? win)
+                (recur (mark-boards (filter (complement wins?) boards) (first numbers))
+                       (rest numbers)
+                       (first numbers)
+                       (conj winning-boards {:board win :after number-called :final-score (final-score win number-called)}))
+                (recur (mark-boards boards (first numbers))
+                       (rest numbers)
+                       (first numbers)
+                       winning-boards)))))]
+    (println "First to win:" (first winning-boards))
+    (println "Last to win:" (last winning-boards))))

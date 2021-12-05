@@ -1,10 +1,8 @@
+(ns advent.day02)
+
 (defn process-line [l]
   (let [[direction step] (clojure.string/split l #" ")]
     [direction (read-string step)]))
-
-(def input
-  (->> (clojure.string/split (slurp "day02.input") #"\n")
-       (map process-line)))
 
 (defn calculate-position [instructions]
   (loop [horizontal 0
@@ -31,12 +29,17 @@
           "down"    (recur horizontal depth (+ aim step) (rest instructions))
           "up"      (recur horizontal depth (- aim step) (rest instructions)))))))
 
-(let [[final-forward final-depth] (calculate-position input)]
-  (println "Part 1")
-  (println "Final submarine position:" [final-forward final-depth])
-  (println final-forward "*" final-depth "=" (* final-forward final-depth)))
+(defn run [& args]
+  (def input
+    (->> (clojure.string/split (slurp "inputs/day02") #"\n")
+         (map process-line)))
 
-(let [[final-forward final-depth] (calculate-position-2 input)]
-  (println "Part 2")
-  (println "Final submarine position:" [final-forward final-depth])
-  (println final-forward "*" final-depth "=" (* final-forward final-depth)))
+  (let [[final-forward final-depth] (calculate-position input)]
+    (println "Part 1")
+    (println "Final submarine position:" [final-forward final-depth])
+    (println final-forward "*" final-depth "=" (* final-forward final-depth)))
+
+  (let [[final-forward final-depth] (calculate-position-2 input)]
+    (println "Part 2")
+    (println "Final submarine position:" [final-forward final-depth])
+    (println final-forward "*" final-depth "=" (* final-forward final-depth))))

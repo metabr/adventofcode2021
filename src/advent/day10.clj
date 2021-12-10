@@ -23,12 +23,10 @@
 (defn check-line [line]
   (loop [line line
          balance '()]
-    ;(println "line: "line "balance:" balance)
     (if (empty? line)
       nil
       (let [expected (peek balance)
             actual (first line)]
-        ;(println "expected:" expected "actual:" actual)
         (if (contains? open-closed actual)
           ;; open bracket
           (recur (rest line) (conj balance actual))

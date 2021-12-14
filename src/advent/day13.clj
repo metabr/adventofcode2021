@@ -16,6 +16,20 @@
              (concat half)
              distinct)))
 
+(defn dimensions [dots]
+  [(inc (apply max (map first dots)))
+   (inc (apply max (map second dots)))])
+
+(defn print-paper [dots]
+  (let [[x-size y-size] (dimensions dots)
+        paper (into [] (repeatedly y-size #(into [] (repeat x-size "."))))]
+    (->> dots
+         (reduce (fn [paper [x y]]
+                   (assoc-in paper [y x] "#"))
+                 paper)
+         (map println)
+         doall)))
+
 (defn run [& _]
   (let [input (string/split-lines (slurp "inputs/day13"))
         [dots folds] (split-with #(not (= % "")) input)
@@ -27,7 +41,16 @@
                   (map #(string/split % #","))
                   (mapv #(vector (Integer/parseInt (first %))
                                  (Integer/parseInt (second %)))))]
+
     (->> (first folds)
          (fold dots)
          count
-         (println "Points visible after first fold:"))))
+         (println "Points visible after first fold:"))
+
+    (doall
+     (->>
+      (reduce (fn [dots f]
+                (fold dots f))
+              (fold dots (first folds))
+              (rest folds))
+      print-paper))))

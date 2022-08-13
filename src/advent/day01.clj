@@ -1,4 +1,5 @@
-(ns advent.day01)
+(ns advent.day01
+  (:require [clojure.string :as string]))
 
 (defn times-increased [measurements]
   (loop [prev nil
@@ -20,9 +21,9 @@
         output
         (recur (rest input) (conj output (sum three)))))))
 
-(defn run [& args]
+(defn run [& _]
   (let [input
-        (->> (clojure.string/split (slurp "inputs/day01") #"\n")
+        (->> (string/split (slurp "inputs/day01") #"\n")
              (map read-string))]
     (println "Number of measurements increased:" (times-increased input))
     (println "Number of sums of a three-measurement sliding window increased:"
